@@ -1,0 +1,277 @@
+Guía de módulos y pruebas — Psicomichi Web
+1. Autenticación / Login
+Descripción
+
+Módulo encargado del acceso al sistema. Permite iniciar sesión, mantener sesión activa, refrescar token automáticamente y cerrar sesión de forma segura.
+
+Qué probar
+Iniciar sesión con credenciales válidas.
+Intentar iniciar sesión con contraseña incorrecta.
+Intentar iniciar sesión con usuario inexistente.
+Confirmar que al iniciar sesión redirige al dashboard.
+Confirmar que al cerrar sesión redirige al login.
+Recargar la página estando autenticado y verificar que conserva la sesión.
+Verificar que un usuario no autenticado no pueda entrar a rutas privadas como:
+/dashboard
+/users
+/patients
+/services
+/appointments
+2. Dashboard / Inicio
+Descripción
+
+Panel operativo inicial del sistema. Muestra un resumen diario con información de citas, pacientes y servicios activos. Sirve como centro de control para la psicóloga, asistentes o administración.
+
+Qué probar
+Confirmar que muestra el nombre del usuario autenticado.
+Confirmar que muestra el rol y correo del usuario.
+Confirmar que muestra métricas del día:
+Citas de hoy.
+Mis citas.
+Citas pendientes.
+Pacientes nuevos.
+Crear una cita para el día actual y verificar que aparezca en el dashboard.
+Crear una cita asignada al usuario actual y verificar que aparezca en “Mis citas”.
+Verificar que las citas reagendadas sigan apareciendo como citas activas.
+Verificar que las citas completadas, canceladas o no asistidas ya no aparezcan como citas activas.
+Confirmar que el dashboard no truena si no hay citas registradas.
+Confirmar que el dashboard no truena si hay citas sin responsable asignado.
+3. Usuarios
+Descripción
+
+Módulo administrativo para gestionar usuarios internos del sistema. Permite crear, editar, activar/desactivar usuarios, cambiar roles, actualizar contraseñas y administrar perfiles de empleados.
+
+Qué probar
+Listar usuarios correctamente.
+Buscar usuario por nombre o correo.
+Crear usuario nuevo.
+Editar datos básicos del usuario.
+Cambiar rol del usuario.
+Activar usuario inactivo.
+Desactivar usuario activo.
+Cambiar contraseña de un usuario.
+Verificar que los roles se muestren correctamente:
+Admin.
+Psicóloga.
+Asistente.
+Cliente.
+Confirmar que un usuario sin permisos no pueda acceder al módulo de usuarios.
+Confirmar que no se puedan realizar acciones no permitidas sobre ciertos usuarios, por ejemplo superusuario si aplica.
+Confirmar que los menús de acciones se despliegan correctamente y no se cortan visualmente.
+4. Pacientes
+Descripción
+
+Módulo para gestionar pacientes o contactos de la clínica. Permite registrar datos personales, contacto, modalidad preferida, motivo inicial, notas internas y estado de seguimiento.
+
+Qué probar
+Listar pacientes correctamente.
+Buscar pacientes por nombre, correo o teléfono.
+Crear paciente con email.
+Crear paciente sin email pero con teléfono.
+Confirmar que no permita crear paciente sin email y sin teléfono.
+Editar datos del paciente.
+Cambiar estado del paciente:
+Nuevo.
+Contactado.
+Activo.
+En seguimiento.
+Inactivo.
+Agregar nota de cambio de estado.
+Filtrar pacientes por estado.
+Filtrar pacientes por modalidad.
+Verificar que los badges de estado y modalidad se muestren correctamente.
+Confirmar que el formulario muestre errores claros ante datos inválidos.
+Confirmar que el modal tenga scroll interno si el contenido crece.
+5. Servicios / Catálogo
+Descripción
+
+Módulo para gestionar el catálogo interno de servicios, sesiones, talleres, cursos, libros, productos digitales o productos físicos. Cada elemento tiene clave interna catalog_code, slug, precio, modalidad, estado, visibilidad y reglas de agendamiento.
+
+Qué probar
+Listar servicios correctamente.
+Buscar servicio por:
+Nombre.
+Clave interna catalog_code.
+Descripción.
+Crear servicio tipo terapia.
+Crear servicio tipo producto digital.
+Crear servicio tipo libro o producto físico.
+Confirmar que el backend genera automáticamente catalog_code.
+Confirmar que el frontend no envía catalog_code al crear.
+Confirmar que el frontend no envía slug al crear.
+Editar servicio existente.
+Confirmar que al editar no cambia catalog_code.
+Publicar servicio.
+Ocultar servicio.
+Activar servicio.
+Desactivar servicio.
+Verificar que al desactivar también quede oculto si esa es la regla del backend.
+Filtrar por:
+Tipo.
+Modalidad.
+Activo/inactivo.
+Público/oculto.
+Requiere cita / no requiere cita.
+Probar validaciones:
+Terapia sin duración debe bloquearse.
+Terapia sin requerir cita debe bloquearse.
+Producto digital con duración debe bloquearse.
+Producto digital con stock debe bloquearse.
+Producto digital con cita debe bloquearse.
+Libro con duración debe bloquearse.
+Stock limitado sin cantidad debe bloquearse.
+URL de imagen inválida debe bloquearse.
+Precio vacío o inválido debe bloquearse.
+Confirmar que las acciones piden confirmación antes de ejecutarse.
+Confirmar que el menú de acciones no rompe la tabla.
+6. Agenda / Citas
+Descripción
+
+Módulo para gestionar citas entre pacientes y servicios agendables. Permite crear citas, asignar responsable, confirmar, completar, cancelar, marcar como no asistió y reagendar. También controla empalmes de horario y estados activos.
+
+Qué probar
+Listado y filtros
+Listar citas correctamente.
+Buscar citas por paciente, servicio o nota.
+Filtrar por estado:
+Programada.
+Confirmada.
+Reagendada.
+Completada.
+Cancelada.
+No asistió.
+Filtrar por modalidad:
+Online.
+Presencial.
+Híbrida.
+Sin definir.
+Filtrar por fecha desde/hasta.
+Confirmar que los filtros de fecha usan el DatePicker visual.
+Confirmar que limpiar filtros restaura el listado inicial.
+Crear cita
+Crear cita con paciente activo.
+Crear cita con servicio activo y que requiere cita.
+Crear cita en fecha futura.
+Crear cita para hoy en una hora futura.
+Confirmar que no permita crear cita en el pasado.
+Confirmar que no permita crear cita sin paciente.
+Confirmar que no permita crear cita sin servicio.
+Confirmar que no permita crear cita con URL inválida.
+Confirmar que se pueda seleccionar responsable.
+Confirmar que si no se selecciona responsable, backend aplique la regla esperada:
+Si el usuario es psicóloga, se autoasigna.
+Si es admin/asistente/superuser, puede quedar sin asignar.
+Confirmar que el TimePicker guarde correctamente:
+4:30 PM debe enviarse como 16:30.
+12:00 AM debe enviarse como 00:00.
+12:00 PM debe enviarse como 12:00.
+Confirmar que los minutos permiten intervalos amplios, por ejemplo:
+12:05
+12:10
+12:55
+Empalmes
+Crear cita de 10:00 a 11:00.
+Intentar crear otra cita de 10:30 a 11:30 y confirmar que backend la bloquee.
+Crear cita de 11:00 a 12:00 y confirmar que sí permita.
+Confirmar que empalmes se bloquean con citas:
+Programadas.
+Confirmadas.
+Reagendadas.
+Confirmar que empalmes no bloquean con citas:
+Completadas.
+Canceladas.
+No asistió.
+Acciones de cita
+Confirmar una cita programada.
+Completar una cita programada.
+Completar una cita confirmada.
+Cancelar una cita con motivo.
+Confirmar que cancelar sin motivo no se permita.
+Marcar una cita como no asistió.
+Agregar nota opcional al marcar como no asistió.
+Confirmar que las acciones no estén disponibles para citas terminales:
+Completada.
+Cancelada.
+No asistió.
+Reagendar
+Reagendar una cita programada.
+Reagendar una cita confirmada.
+Reagendar una cita ya reagendada.
+Confirmar que el motivo de reagenda sea obligatorio.
+Confirmar que no permita reagendar a fecha/hora pasada.
+Confirmar que no permita reagendar a un horario empalmado.
+Confirmar que una cita reagendada sigue siendo activa.
+Confirmar que una cita reagendada todavía permite:
+Confirmar.
+Completar.
+Cancelar.
+No asistió.
+Reagendar nuevamente.
+Tabla
+Confirmar que se muestre:
+Paciente.
+Servicio.
+Horario.
+Modalidad.
+Estado.
+Responsable.
+Creada por.
+Lugar o enlace.
+Acciones.
+Confirmar que citas sin responsable muestran “Sin asignar”.
+Confirmar que citas creadas desde panel muestran origen Panel interno.
+Confirmar que el enlace de reunión abra en nueva pestaña.
+Confirmar que la tabla no quede encapsulada dentro de otra card.
+7. Navegación y permisos
+Descripción
+
+Controla qué rutas y módulos puede ver cada usuario según su rol y permisos.
+
+Qué probar
+Admin puede ver módulos administrativos.
+Psicóloga puede ver pacientes, servicios y agenda.
+Asistente puede ver módulos permitidos.
+Cliente no puede acceder al panel privado si aún no tiene portal.
+Usuario sin sesión es redirigido al login.
+Rutas protegidas redirigen correctamente.
+Sidebar muestra solo opciones permitidas.
+Sidebar no muestra módulos deshabilitados como si fueran funcionales.
+Logout funciona correctamente.
+8. Docker / Pruebas de despliegue frontend
+Descripción
+
+Setup para levantar el frontend en modo producción usando Docker y Nginx, facilitando que otras personas prueben el sistema sin instalar Node ni pnpm.
+
+Qué probar
+Clonar repo limpio.
+Crear .env desde .env.docker.example.
+Configurar VITE_API_BASE_URL.
+Ejecutar:
+docker compose up --build
+Abrir:
+http://localhost:5173
+Confirmar que el login carga.
+Confirmar que el frontend se conecta al backend correcto.
+Confirmar que al recargar rutas como /dashboard, /patients, /services o /appointments no marca 404.
+Confirmar acceso desde otra computadora en red local usando la IP del host.
+Confirmar que si cambia VITE_API_BASE_URL, se reconstruye la imagen.
+Checklist final del MVP
+
+Antes de compartir para pruebas externas, validar:
+
+pnpm lint
+pnpm build
+docker compose up --build
+
+Y probar mínimo:
+
+Login
+Dashboard
+Crear paciente
+Crear servicio agendable
+Crear cita
+Reagendar cita
+Confirmar cita
+Cancelar cita
+Buscar cita
+Cerrar sesión

@@ -1,0 +1,200 @@
+# Setup Docker — Psicomichi Web
+
+Guía rápida para clonar el frontend de Psicomichi, configurar la URL del backend y levantarlo con Docker.
+
+---
+
+## 1. Requisitos
+
+Antes de iniciar, asegúrate de tener instalado:
+
+- Git
+- Docker Desktop
+- Docker Compose
+
+Verifica:
+
+```bash
+git --version
+docker --version
+docker compose version
+
+2. Clonar el repositorio
+git clone URL_DEL_REPOSITORIO
+cd psicomichi-web
+
+Ejemplo:
+
+git clone https://github.com/usuario/psicomichi-web.git
+cd psicomichi-web
+
+3. Crear archivo de variables de entorno
+
+Copia el archivo de ejemplo:
+
+Windows PowerShell
+copy .env.docker.example .env
+Linux / macOS / Git Bash
+cp .env.docker.example .env
+4. Configurar URL del backend
+
+Abre el archivo:
+
+.env
+
+Y configura la URL del backend:
+
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+
+Si el backend está corriendo en otra computadora dentro de la red local, usa la IP de esa computadora:
+
+VITE_API_BASE_URL=http://192.168.1.50:8000/api/v1
+
+Importante: si otra persona probará el frontend desde otra computadora, no uses localhost como backend, porque localhost apuntará a la computadora de esa persona, no a la tuya.
+
+Ejemplo recomendado en red local:
+
+VITE_API_BASE_URL=http://192.168.1.80:8000/api/v1
+5. Levantar frontend con Docker
+
+Ejecuta:
+
+docker compose up --build
+
+Esto construirá la app de Vite y la servirá con Nginx.
+
+Cuando termine, abre:
+
+http://localhost:5173
+
+6. Levantar en segundo plano
+
+Para dejar el contenedor corriendo en background:
+
+docker compose up --build -d
+7. Ver logs
+docker compose logs -f
+8. Detener contenedor
+docker compose down
+9. Acceder desde otra computadora en la red
+
+Si tu computadora tiene IP:
+
+192.168.1.80
+
+Entonces otra persona puede entrar desde su navegador a:
+
+http://192.168.1.80:5173
+
+Recuerda que el backend también debe ser accesible desde esa computadora.
+
+Ejemplo de .env para pruebas en red local:
+
+VITE_API_BASE_URL=http://192.168.1.80:8000/api/v1
+10. Cambiar URL del backend
+
+En Vite, las variables VITE_* se integran durante el build.
+
+Si cambias:
+
+VITE_API_BASE_URL
+
+debes reconstruir la imagen:
+
+docker compose up --build
+
+No basta con reiniciar el contenedor.
+
+11. Comandos útiles
+Construir y levantar
+docker compose up --build
+Levantar en segundo plano
+docker compose up --build -d
+Ver contenedores
+docker ps
+Ver logs
+docker compose logs -f
+Detener
+docker compose down
+Reconstruir desde cero
+docker compose down
+docker compose up --build
+12. Puertos
+
+El frontend se expone en:
+
+http://localhost:5173
+
+Internamente Nginx sirve la app en el puerto 80, pero Docker lo mapea así:
+
+ports:
+  - "5173:80"
+13. Estructura Docker esperada
+
+La raíz del proyecto debe tener:
+
+psicomichi-web/
+├─ Dockerfile
+├─ docker-compose.yml
+├─ nginx.conf
+├─ .dockerignore
+├─ .env.docker.example
+├─ package.json
+├─ pnpm-lock.yaml
+├─ src/
+└─ ...
+14. Problemas comunes
+El frontend abre, pero no conecta al backend
+
+Revisa el archivo .env:
+
+VITE_API_BASE_URL=http://IP_DEL_BACKEND:8000/api/v1
+
+Después reconstruye:
+
+docker compose up --build
+Otra computadora no puede entrar al frontend
+
+Verifica:
+
+Que estén en la misma red.
+Que estés usando la IP correcta de tu computadora.
+Que Docker esté corriendo.
+Que el firewall permita conexiones al puerto 5173.
+
+Ejemplo:
+
+http://192.168.1.80:5173
+Las rutas como /dashboard dan error al recargar
+
+El archivo nginx.conf debe tener:
+
+location / {
+  try_files $uri $uri/ /index.html;
+}
+
+Esto permite que React Router funcione correctamente en producción.
+
+15. Flujo recomendado para pruebas
+Levantar backend.
+Confirmar que backend responde en:
+http://localhost:8000/api/v1
+
+o en la IP correspondiente.
+
+Configurar .env del frontend:
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+Levantar frontend:
+docker compose up --build
+Abrir:
+http://localhost:5173
+Probar:
+Login
+Dashboard
+Usuarios
+Pacientes
+Servicios
+Agenda
+Crear cita
+Reagendar cita
+Confirmar cita
