@@ -24,4 +24,6 @@ dist-ssr
 *.sw?
 
 #variables de entorno
-.env
+.env.env
+.env.local
+.env.*
